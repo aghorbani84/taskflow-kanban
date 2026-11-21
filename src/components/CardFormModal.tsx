@@ -18,6 +18,9 @@ interface Props {
   onClose: () => void;
 }
 
+const fieldClass =
+  'mt-1.5 w-full rounded-lg border border-line-strong bg-white px-3 py-2 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
+
 export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) {
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
@@ -50,7 +53,7 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+      className="tf-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -59,37 +62,37 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
       <form
         onSubmit={submit}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+        className="tf-modal w-full max-w-lg rounded-[21px] bg-white p-[21px] shadow-[0_24px_56px_-16px_rgba(0,0,0,0.25),0_8px_18px_-8px_rgba(0,0,0,0.12)]"
       >
-        <h2 className="text-lg font-semibold text-slate-900">
+        <h2 className="text-[21px] font-semibold leading-tight tracking-tight text-ink-strong">
           {initial ? 'Edit card' : `Add card — ${columnTitle}`}
         </h2>
 
-        <label className="mt-4 block text-sm font-medium text-slate-700">
+        <label className="mt-5 block text-[13px] font-medium text-ink-strong">
           Title
           <input
             autoFocus
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Fix login redirect on Safari"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            className={fieldClass}
           />
         </label>
-        {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
+        {error && <p className="mt-1.5 text-xs font-medium text-red-600">{error}</p>}
 
-        <label className="mt-4 block text-sm font-medium text-slate-700">
+        <label className="mt-[13px] block text-[13px] font-medium text-ink-strong">
           Description
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             placeholder="What needs to be done?"
-            className="mt-1 w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            className={`${fieldClass} resize-none leading-relaxed`}
           />
         </label>
 
-        <fieldset className="mt-4">
-          <legend className="text-sm font-medium text-slate-700">Labels</legend>
+        <fieldset className="mt-[13px]">
+          <legend className="text-[13px] font-medium text-ink-strong">Labels</legend>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {ALL_LABELS.map((label) => {
               const active = labels.includes(label);
@@ -110,13 +113,13 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
           </div>
         </fieldset>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <label className="block text-sm font-medium text-slate-700">
+        <div className="mt-[13px] grid grid-cols-2 gap-[13px]">
+          <label className="block text-[13px] font-medium text-ink-strong">
             Priority
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as Priority)}
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className={fieldClass}
             >
               {ALL_PRIORITIES.map((p) => (
                 <option key={p} value={p}>
@@ -125,28 +128,28 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
               ))}
             </select>
           </label>
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block text-[13px] font-medium text-ink-strong">
             Due date
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className={fieldClass}
             />
           </label>
         </div>
 
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="mt-[21px] flex justify-end gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+            className="rounded-lg px-[13px] py-2 text-sm font-medium text-ink transition-colors hover:bg-slate-100"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            className="rounded-lg bg-accent px-[13px] py-2 text-sm font-medium text-white shadow-[0_1px_2px_rgba(79,70,229,0.4)] transition-colors hover:bg-accent-strong"
           >
             {initial ? 'Save changes' : 'Add card'}
           </button>

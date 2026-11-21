@@ -10,6 +10,7 @@ import {
   type DragOverEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
+import { Plus, RotateCcw, Search, SearchX } from 'lucide-react';
 import { useBoardStore } from './store';
 import type { Card, Label, Priority } from './types';
 import { ALL_LABELS, ALL_PRIORITIES } from './types';
@@ -20,6 +21,9 @@ type ModalState =
   | { mode: 'add'; columnId: string }
   | { mode: 'edit'; card: Card }
   | null;
+
+const controlClass =
+  'h-[34px] rounded-lg border border-line-strong bg-white px-3 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
 
 export default function App() {
   const columns = useBoardStore((s) => s.columns);
@@ -62,6 +66,8 @@ export default function App() {
     const col = columns.find((col) => col.id === c.columnId);
     return col?.title.toLowerCase() === 'done';
   }).length;
+  const filtersActive =
+    search.trim() !== '' || labelFilter !== '' || priorityFilter !== '';
 
   const handleDragStart = (e: DragStartEvent) => {
     const card = cards.find((c) => c.id === e.active.id);
@@ -124,39 +130,52 @@ export default function App() {
     setAddingColumn(false);
   };
 
+  const clearFilters = () => {
+    setSearch('');
+    setLabelFilter('');
+    setPriorityFilter('');
+  };
+
   const modalColumnTitle =
     modal?.mode === 'add'
       ? (columns.find((c) => c.id === modal.columnId)?.title ?? '')
       : '';
 
   return (
-    <div className="flex h-full flex-col bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">
-              Taskflow <span className="text-indigo-600">Kanban</span>
+    <div className="flex h-full flex-col bg-canvas text-ink-strong">
+      <header className="border-b border-line bg-white">
+        <div className="flex flex-wrap items-center gap-x-[21px] gap-y-3 px-[21px] py-[13px]">
+          <div className="shrink-0">
+            <h1 className="text-[21px] font-bold leading-tight tracking-tight">
+              Taskflow <span className="text-accent">Kanban</span>
             </h1>
-            <p className="text-xs text-slate-500">
+            <p className="mt-[3px] text-xs leading-[1.3] text-ink">
               {totalCards} cards · {doneCount} done · saved automatically in
               your browser
             </p>
           </div>
 
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Filter cards by text…"
-              aria-label="Filter cards by text"
-              className="min-w-44 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            />
+            <div className="relative min-w-44 flex-1">
+              <Search
+                size={15}
+                strokeWidth={2}
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
+              />
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Filter cards by text…"
+                aria-label="Filter cards by text"
+                className={`${controlClass} w-full pl-[34px]`}
+              />
+            </div>
             <select
               value={labelFilter}
               onChange={(e) => setLabelFilter(e.target.value as Label | '')}
               aria-label="Filter by label"
-              className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm outline-none focus:border-indigo-500"
+              className={controlClass}
             >
               <option value="">All labels</option>
               {ALL_LABELS.map((l) => (
@@ -171,7 +190,7 @@ export default function App() {
                 setPriorityFilter(e.target.value as Priority | '')
               }
               aria-label="Filter by priority"
-              className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm outline-none focus:border-indigo-500"
+              className={controlClass}
             >
               <option value="">All priorities</option>
               {ALL_PRIORITIES.map((p) => (
@@ -192,14 +211,15 @@ export default function App() {
               )
                 resetBoard();
             }}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+            className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-lg border border-line-strong px-3 text-sm font-medium text-ink transition-colors hover:bg-slate-100 hover:text-ink-strong"
           >
+            <RotateCcw size={14} strokeWidth={2} />
             Reset demo data
           </button>
         </div>
       </header>
 
-      <main className="board-scroll flex-1 overflow-x-auto overflow-y-hidden">
+      <main className="board-scroll relative flex-1 overflow-x-auto overflow-y-hidden">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
@@ -207,7 +227,7 @@ export default function App() {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex h-full items-start gap-4 px-4 py-4 sm:px-6">
+          <div className="flex h-full items-start gap-[13px] px-[21px] py-[21px]">
             {columns.map((column) => (
               <KanbanColumn
                 key={column.id}
@@ -223,7 +243,7 @@ export default function App() {
 
             <div className="w-80 shrink-0">
               {addingColumn ? (
-                <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                <div className="tf-modal rounded-[21px] border border-line bg-white p-[13px] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]">
                   <input
                     autoFocus
                     value={newColumnTitle}
@@ -234,20 +254,20 @@ export default function App() {
                     }}
                     placeholder="Column name, e.g. Review"
                     aria-label="New column name"
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                    className={controlClass}
                   />
                   <div className="mt-2 flex gap-2">
                     <button
                       type="button"
                       onClick={commitNewColumn}
-                      className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                      className="h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-white transition-colors hover:bg-accent-strong"
                     >
                       Add column
                     </button>
                     <button
                       type="button"
                       onClick={() => setAddingColumn(false)}
-                      className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+                      className="h-[34px] rounded-lg px-3 text-sm font-medium text-ink hover:bg-slate-100"
                     >
                       Cancel
                     </button>
@@ -257,9 +277,10 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setAddingColumn(true)}
-                  className="w-full rounded-2xl border border-dashed border-slate-300 px-3 py-3 text-sm font-medium text-slate-500 hover:border-indigo-300 hover:bg-white hover:text-indigo-600"
+                  className="flex w-full items-center gap-1.5 rounded-[21px] border border-dashed border-line-strong px-[13px] py-3 text-sm font-medium text-ink transition-colors hover:border-accent/40 hover:bg-white hover:text-accent"
                 >
-                  + Add column
+                  <Plus size={15} strokeWidth={2} />
+                  Add column
                 </button>
               )}
             </div>
@@ -267,11 +288,11 @@ export default function App() {
 
           <DragOverlay>
             {activeCard ? (
-              <div className="w-80 rotate-2 rounded-xl border border-indigo-300 bg-white p-3 opacity-95 shadow-xl">
-                <h3 className="text-sm font-semibold text-slate-900">
+              <div className="tf-lifted w-80 rounded-[13px] border border-indigo-200 bg-white p-[13px] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.28),0_4px_12px_-4px_rgba(0,0,0,0.12)]">
+                <h3 className="text-[13px] font-semibold leading-[1.4] text-ink-strong">
                   {activeCard.title}
                 </h3>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs leading-[1.3] text-ink">
                   {activeCard.labels.join(' · ')}
                   {activeCard.labels.length > 0 && ' · '}
                   {activeCard.priority}
@@ -280,9 +301,32 @@ export default function App() {
             ) : null}
           </DragOverlay>
         </DndContext>
+
+        {totalCards > 0 && visibleCards.length === 0 && filtersActive && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="pointer-events-auto flex flex-col items-center rounded-[21px] border border-line bg-white px-[34px] py-[21px] text-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]">
+              <span className="grid size-[34px] place-items-center rounded-full bg-accent-soft text-accent">
+                <SearchX size={16} strokeWidth={2} />
+              </span>
+              <p className="mt-[13px] text-sm font-semibold text-ink-strong">
+                No cards match these filters
+              </p>
+              <p className="mt-1 text-xs text-ink">
+                Try a different search, label or priority.
+              </p>
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-[13px] h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-white transition-colors hover:bg-accent-strong"
+              >
+                Clear filters
+              </button>
+            </div>
+          </div>
+        )}
       </main>
 
-      <footer className="border-t border-slate-200 bg-white px-4 py-2 text-center text-xs text-slate-400">
+      <footer className="border-t border-line bg-white px-[21px] py-2 text-center text-[11px] leading-[1.3] text-ink-faint">
         Drag cards between columns to change their status · Click a column
         title to rename it · All changes are stored in localStorage
       </footer>
@@ -298,23 +342,23 @@ export default function App() {
 
       {confirmDelete && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+          className="tf-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
           role="alertdialog"
           aria-modal="true"
           aria-label="Confirm delete card"
         >
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-semibold text-slate-900">
+          <div className="tf-modal w-full max-w-sm rounded-[21px] bg-white p-[21px] shadow-[0_24px_56px_-16px_rgba(0,0,0,0.25),0_8px_18px_-8px_rgba(0,0,0,0.12)]">
+            <h2 className="text-lg font-semibold leading-tight text-ink-strong">
               Delete card?
             </h2>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm leading-relaxed text-ink">
               “{confirmDelete.title}” will be permanently removed.
             </p>
-            <div className="mt-6 flex justify-end gap-2">
+            <div className="mt-[21px] flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setConfirmDelete(null)}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+                className="h-[34px] rounded-lg px-[13px] text-sm font-medium text-ink hover:bg-slate-100"
               >
                 Cancel
               </button>
@@ -324,7 +368,7 @@ export default function App() {
                   deleteCard(confirmDelete.id);
                   setConfirmDelete(null);
                 }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                className="h-[34px] rounded-lg bg-red-600 px-[13px] text-sm font-medium text-white transition-colors hover:bg-red-700"
               >
                 Delete
               </button>

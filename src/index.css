@@ -1,5 +1,34 @@
 @import "tailwindcss";
 
+/*
+ * Taskflow — Stageshow redesign tokens.
+ * Look: Linear-quiet — one warm-neutral family, white surfaces, a single
+ * indigo accent; colour lives only on status dots, label chips and priority.
+ * Proportion system: φ ≈ 1.618 — type 11 / 13 / 21, spacing 8 / 13 / 21 / 34,
+ * radii 8 / 13 / 21.
+ */
+@theme {
+  --color-canvas: #f4f4f2;
+  --color-well: #fafaf9;
+  --color-surface: #ffffff;
+  --color-ink-strong: #1d1d1a;
+  --color-ink: #55554f;
+  --color-ink-faint: #a3a39d;
+  --color-line: #e7e7e3;
+  --color-line-strong: #d9d9d4;
+  --color-accent: #4f46e5;
+  --color-accent-strong: #4338ca;
+  --color-accent-soft: #eef2ff;
+  --color-accent-ring: #e0e7ff;
+
+  --radius-sm: 8px;
+  --radius-md: 13px;
+  --radius-lg: 21px;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+}
+
 html,
 body,
 #root {
@@ -7,8 +36,10 @@ body,
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    sans-serif;
+  font-family: var(--font-sans);
+  background: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /* Slim, subtle scrollbars for the horizontal board */
@@ -17,9 +48,68 @@ body {
   width: 10px;
 }
 .board-scroll::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d4d4cf;
   border-radius: 9999px;
+  border: 2px solid var(--color-canvas);
 }
 .board-scroll::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Column card lists scroll vertically; keep their scrollbars quiet too */
+.column-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4cf transparent;
+}
+.column-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.column-scroll::-webkit-scrollbar-thumb {
+  background: #d4d4cf;
+  border-radius: 9999px;
+}
+.column-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Modal / dialog entrance: a short settle, never a bounce */
+@keyframes tf-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes tf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.tf-modal {
+  animation: tf-modal-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.tf-backdrop {
+  animation: tf-fade-in 0.15s ease-out both;
+}
+
+/* The lifted card rides the cursor: a touch larger, a lift shadow, a
+   slight tilt — the reorder story. dnd-kit moves it; CSS only styles it. */
+.tf-lifted {
+  transform: rotate(2deg) scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tf-modal,
+  .tf-backdrop {
+    animation: none;
+  }
+  .tf-lifted {
+    transform: none;
+  }
 }
