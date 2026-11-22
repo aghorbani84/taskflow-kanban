@@ -19,7 +19,7 @@ interface Props {
 }
 
 const fieldClass =
-  'mt-1.5 w-full rounded-lg border border-line-strong bg-white px-3 py-2 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
+  'mt-1.5 w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
 
 export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) {
   const [title, setTitle] = useState(initial?.title ?? '');
@@ -62,9 +62,9 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
       <form
         onSubmit={submit}
         onClick={(e) => e.stopPropagation()}
-        className="tf-modal w-full max-w-lg rounded-[21px] bg-white p-[21px] shadow-[0_24px_56px_-16px_rgba(0,0,0,0.25),0_8px_18px_-8px_rgba(0,0,0,0.12)]"
+        className="tf-modal w-full max-w-lg rounded-[21px] bg-surface p-[21px] shadow-[0_24px_56px_-16px_rgba(0,0,0,0.25),0_8px_18px_-8px_rgba(0,0,0,0.12)]"
       >
-        <h2 className="text-[21px] font-semibold leading-tight tracking-tight text-ink-strong">
+        <h2 className="font-display text-[21px] font-semibold leading-tight tracking-tight text-ink-strong">
           {initial ? 'Edit card' : `Add card — ${columnTitle}`}
         </h2>
 
@@ -143,13 +143,13 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-[13px] py-2 text-sm font-medium text-ink transition-colors hover:bg-slate-100"
+            className="rounded-lg px-[13px] py-2 text-sm font-medium text-ink transition-colors hover:bg-raised"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="rounded-lg bg-accent px-[13px] py-2 text-sm font-medium text-white shadow-[0_1px_2px_rgba(79,70,229,0.4)] transition-colors hover:bg-accent-strong"
+            className="rounded-lg bg-accent px-[13px] py-2 text-sm font-medium text-accent-text shadow-[0_1px_2px_rgba(79,70,229,0.4)] transition-colors hover:bg-accent-strong"
           >
             {initial ? 'Save changes' : 'Add card'}
           </button>

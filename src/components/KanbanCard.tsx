@@ -30,9 +30,9 @@ export function KanbanCard({ card, onEdit, onDelete }: Props) {
       style={{ transform: CSS.Transform.toString(transform), transition }}
       {...attributes}
       {...listeners}
-      className={`group relative rounded-[13px] border bg-white p-[13px] pl-[9px] shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-150 hover:shadow-[0_4px_14px_-4px_rgba(0,0,0,0.12)] ${
+      className={`group relative rounded-[13px] border bg-surface p-[13px] pl-[9px] shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-150 hover:shadow-[0_4px_14px_-4px_rgba(0,0,0,0.12)] ${
         isDragging
-          ? 'border-indigo-300 opacity-40'
+          ? 'border-accent opacity-40'
           : 'border-line'
       } cursor-grab active:cursor-grabbing`}
     >
@@ -42,7 +42,7 @@ export function KanbanCard({ card, onEdit, onDelete }: Props) {
             draggable even before the pointer arrives. */}
         <span
           aria-hidden="true"
-          className="mt-[1px] flex shrink-0 items-center text-slate-300 opacity-60 transition-opacity group-hover:text-slate-400 group-hover:opacity-100"
+          className="mt-[1px] flex shrink-0 items-center text-ink-faint opacity-60 transition-opacity group-hover:text-ink group-hover:opacity-100"
         >
           <GripVertical size={16} strokeWidth={2} />
         </span>
@@ -61,7 +61,7 @@ export function KanbanCard({ card, onEdit, onDelete }: Props) {
                   onEdit(card);
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="grid size-6 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                className="grid size-6 place-items-center rounded-md text-ink-faint hover:bg-raised hover:text-text"
               >
                 <Pencil size={14} strokeWidth={2} />
               </button>
@@ -73,7 +73,7 @@ export function KanbanCard({ card, onEdit, onDelete }: Props) {
                   onDelete(card);
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="grid size-6 place-items-center rounded-md text-slate-400 hover:bg-red-50 hover:text-red-600"
+                className="grid size-6 place-items-center rounded-md text-ink-faint hover:bg-red-500/10 hover:text-red-600"
               >
                 <Trash2 size={14} strokeWidth={2} />
               </button>

@@ -11,6 +11,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import { Plus, RotateCcw, Search, SearchX } from 'lucide-react';
+import { FaravaharMark, ThemeSwitcher } from './components/ThemeSwitcher';
 import { useBoardStore } from './store';
 import type { Card, Label, Priority } from './types';
 import { ALL_LABELS, ALL_PRIORITIES } from './types';
@@ -23,7 +24,7 @@ type ModalState =
   | null;
 
 const controlClass =
-  'h-[34px] rounded-lg border border-line-strong bg-white px-3 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
+  'h-[34px] rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
 
 export default function App() {
   const columns = useBoardStore((s) => s.columns);
@@ -143,16 +144,19 @@ export default function App() {
 
   return (
     <div className="flex h-full flex-col bg-canvas text-ink-strong">
-      <header className="border-b border-line bg-white">
+      <header className="tf-header border-b border-line bg-surface">
         <div className="flex flex-wrap items-center gap-x-[21px] gap-y-3 px-[21px] py-[13px]">
-          <div className="shrink-0">
-            <h1 className="text-[21px] font-bold leading-tight tracking-tight">
+          <div className="flex shrink-0 items-start gap-2">
+            <FaravaharMark className="tf-faravahar mt-1 h-[28px] w-auto text-gold-600" />
+            <div>
+            <h1 className="font-display text-[21px] font-bold leading-tight tracking-tight">
               Taskflow <span className="text-accent">Kanban</span>
             </h1>
             <p className="mt-[3px] text-xs leading-[1.3] text-ink">
               {totalCards} cards · {doneCount} done · saved automatically in
               your browser
             </p>
+            </div>
           </div>
 
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
@@ -201,6 +205,8 @@ export default function App() {
             </select>
           </div>
 
+          <ThemeSwitcher />
+
           <button
             type="button"
             onClick={() => {
@@ -211,12 +217,13 @@ export default function App() {
               )
                 resetBoard();
             }}
-            className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-lg border border-line-strong px-3 text-sm font-medium text-ink transition-colors hover:bg-slate-100 hover:text-ink-strong"
+            className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-lg border border-line-strong px-3 text-sm font-medium text-ink transition-colors hover:bg-raised hover:text-ink-strong"
           >
             <RotateCcw size={14} strokeWidth={2} />
             Reset demo data
           </button>
         </div>
+        <div aria-hidden="true" className="tf-double-rule" />
       </header>
 
       <main className="board-scroll relative flex-1 overflow-x-auto overflow-y-hidden">
@@ -243,7 +250,7 @@ export default function App() {
 
             <div className="w-80 shrink-0">
               {addingColumn ? (
-                <div className="tf-modal rounded-[21px] border border-line bg-white p-[13px] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]">
+                <div className="tf-modal rounded-[21px] border border-line bg-surface p-[13px] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]">
                   <input
                     autoFocus
                     value={newColumnTitle}
@@ -260,14 +267,14 @@ export default function App() {
                     <button
                       type="button"
                       onClick={commitNewColumn}
-                      className="h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-white transition-colors hover:bg-accent-strong"
+                      className="h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-accent-text transition-colors hover:bg-accent-strong"
                     >
                       Add column
                     </button>
                     <button
                       type="button"
                       onClick={() => setAddingColumn(false)}
-                      className="h-[34px] rounded-lg px-3 text-sm font-medium text-ink hover:bg-slate-100"
+                      className="h-[34px] rounded-lg px-3 text-sm font-medium text-ink hover:bg-raised"
                     >
                       Cancel
                     </button>
@@ -277,7 +284,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setAddingColumn(true)}
-                  className="flex w-full items-center gap-1.5 rounded-[21px] border border-dashed border-line-strong px-[13px] py-3 text-sm font-medium text-ink transition-colors hover:border-accent/40 hover:bg-white hover:text-accent"
+                  className="flex w-full items-center gap-1.5 rounded-[21px] border border-dashed border-line-strong px-[13px] py-3 text-sm font-medium text-ink transition-colors hover:border-accent/40 hover:bg-surface hover:text-accent"
                 >
                   <Plus size={15} strokeWidth={2} />
                   Add column
@@ -288,7 +295,7 @@ export default function App() {
 
           <DragOverlay>
             {activeCard ? (
-              <div className="tf-lifted w-80 rounded-[13px] border border-indigo-200 bg-white p-[13px] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.28),0_4px_12px_-4px_rgba(0,0,0,0.12)]">
+              <div className="tf-lifted w-80 rounded-[13px] border border-line-strong bg-surface p-[13px] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.28),0_4px_12px_-4px_rgba(0,0,0,0.12)]">
                 <h3 className="text-[13px] font-semibold leading-[1.4] text-ink-strong">
                   {activeCard.title}
                 </h3>
@@ -304,7 +311,7 @@ export default function App() {
 
         {totalCards > 0 && visibleCards.length === 0 && filtersActive && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="pointer-events-auto flex flex-col items-center rounded-[21px] border border-line bg-white px-[34px] py-[21px] text-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]">
+            <div className="pointer-events-auto flex flex-col items-center rounded-[21px] border border-line bg-surface px-[34px] py-[21px] text-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]">
               <span className="grid size-[34px] place-items-center rounded-full bg-accent-soft text-accent">
                 <SearchX size={16} strokeWidth={2} />
               </span>
@@ -317,7 +324,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="mt-[13px] h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-white transition-colors hover:bg-accent-strong"
+                className="mt-[13px] h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-accent-text transition-colors hover:bg-accent-strong"
               >
                 Clear filters
               </button>
@@ -326,7 +333,7 @@ export default function App() {
         )}
       </main>
 
-      <footer className="border-t border-line bg-white px-[21px] py-2 text-center text-[11px] leading-[1.3] text-ink-faint">
+      <footer className="border-t border-line bg-surface px-[21px] py-2 text-center text-[11px] leading-[1.3] text-ink-faint">
         Drag cards between columns to change their status · Click a column
         title to rename it · All changes are stored in localStorage
       </footer>
@@ -347,7 +354,7 @@ export default function App() {
           aria-modal="true"
           aria-label="Confirm delete card"
         >
-          <div className="tf-modal w-full max-w-sm rounded-[21px] bg-white p-[21px] shadow-[0_24px_56px_-16px_rgba(0,0,0,0.25),0_8px_18px_-8px_rgba(0,0,0,0.12)]">
+          <div className="tf-modal w-full max-w-sm rounded-[21px] bg-surface p-[21px] shadow-[0_24px_56px_-16px_rgba(0,0,0,0.25),0_8px_18px_-8px_rgba(0,0,0,0.12)]">
             <h2 className="text-lg font-semibold leading-tight text-ink-strong">
               Delete card?
             </h2>
@@ -358,7 +365,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setConfirmDelete(null)}
-                className="h-[34px] rounded-lg px-[13px] text-sm font-medium text-ink hover:bg-slate-100"
+                className="h-[34px] rounded-lg px-[13px] text-sm font-medium text-ink hover:bg-raised"
               >
                 Cancel
               </button>

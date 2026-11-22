@@ -53,7 +53,7 @@ export function KanbanColumn({
       ref={setNodeRef}
       className={`flex w-80 shrink-0 flex-col rounded-[21px] border p-[13px] transition-colors duration-150 ${
         isOver
-          ? 'border-indigo-300 bg-indigo-50/60'
+          ? 'border-accent/60 bg-accent-soft/60'
           : 'border-line bg-well'
       }`}
       aria-label={`${column.title} column, ${cards.length} cards`}
@@ -76,19 +76,19 @@ export function KanbanColumn({
                 setEditingTitle(false);
               }
             }}
-            className="h-[26px] min-w-0 flex-1 rounded-md border border-indigo-300 bg-white px-2 text-[13px] font-semibold text-ink-strong outline-none"
+            className="h-[26px] min-w-0 flex-1 rounded-md border border-accent bg-surface px-2 text-[13px] font-semibold text-ink-strong outline-none"
             aria-label="Column title"
           />
         ) : (
           <h2
-            className="cursor-text truncate text-[13px] font-semibold text-ink-strong"
+            className="font-display cursor-text truncate text-[13px] font-semibold text-ink-strong"
             title="Click to rename"
             onClick={() => setEditingTitle(true)}
           >
             {column.title}
           </h2>
         )}
-        <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold leading-[1.3] text-ink ring-1 ring-line">
+        <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-semibold leading-[1.3] text-ink ring-1 ring-line">
           {cards.length}
         </span>
         <button
@@ -131,7 +131,7 @@ export function KanbanColumn({
       <button
         type="button"
         onClick={() => onAddCard(column.id)}
-        className="mt-[13px] flex items-center gap-1.5 rounded-[13px] px-2.5 py-2 text-left text-[13px] font-medium text-ink transition-colors hover:bg-white hover:text-ink-strong hover:shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+        className="mt-[13px] flex items-center gap-1.5 rounded-[13px] px-2.5 py-2 text-left text-[13px] font-medium text-ink transition-colors hover:bg-surface hover:text-ink-strong hover:shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
       >
         <Plus size={15} strokeWidth={2} />
         Add card
