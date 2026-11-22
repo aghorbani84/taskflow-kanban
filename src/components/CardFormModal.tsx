@@ -19,7 +19,7 @@ interface Props {
 }
 
 const fieldClass =
-  'mt-1.5 w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
+  'mt-1.5 min-h-11 w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring sm:min-h-0';
 
 export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) {
   const [title, setTitle] = useState(initial?.title ?? '');
@@ -102,7 +102,7 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
                   type="button"
                   onClick={() => toggleLabel(label)}
                   aria-pressed={active}
-                  className={`rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition-opacity ${
+                  className={`min-h-11 rounded-full px-3 py-2 text-xs font-medium ring-1 ring-inset transition-opacity sm:min-h-0 sm:py-1 ${
                     LABEL_STYLES[label]
                   } ${active ? '' : 'opacity-40 hover:opacity-70'}`}
                 >
@@ -113,7 +113,7 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
           </div>
         </fieldset>
 
-        <div className="mt-[13px] grid grid-cols-2 gap-[13px]">
+        <div className="mt-[13px] grid grid-cols-1 gap-[13px] sm:grid-cols-2">
           <label className="block text-[13px] font-medium text-ink-strong">
             Priority
             <select
@@ -143,13 +143,13 @@ export function CardFormModal({ initial, columnTitle, onSave, onClose }: Props) 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-[13px] py-2 text-sm font-medium text-ink transition-colors hover:bg-raised"
+            className="min-h-11 rounded-lg px-[13px] py-2 text-sm font-medium text-ink transition-colors hover:bg-raised sm:min-h-0"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="rounded-lg bg-accent px-[13px] py-2 text-sm font-medium text-accent-text shadow-[0_1px_2px_rgba(79,70,229,0.4)] transition-colors hover:bg-accent-strong"
+            className="min-h-11 rounded-lg bg-accent px-[13px] py-2 text-sm font-medium text-accent-text shadow-[0_1px_2px_rgba(79,70,229,0.4)] transition-colors hover:bg-accent-strong sm:min-h-0"
           >
             {initial ? 'Save changes' : 'Add card'}
           </button>

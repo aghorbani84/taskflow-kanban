@@ -52,7 +52,9 @@ export function KanbanCard({ card, onEdit, onDelete }: Props) {
             <h3 className="text-[13px] font-semibold leading-[1.4] text-ink-strong">
               {card.title}
             </h3>
-            <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
+            {/* Hover-reveal on desktop; always visible on touch (no hover),
+                and 44px targets on mobile. */}
+            <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 max-sm:opacity-100">
               <button
                 type="button"
                 aria-label={`Edit ${card.title}`}
@@ -61,7 +63,7 @@ export function KanbanCard({ card, onEdit, onDelete }: Props) {
                   onEdit(card);
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="grid size-6 place-items-center rounded-md text-ink-faint hover:bg-raised hover:text-text"
+                className="grid size-11 place-items-center rounded-md text-ink-faint hover:bg-raised hover:text-text sm:size-6"
               >
                 <Pencil size={14} strokeWidth={2} />
               </button>
@@ -73,7 +75,7 @@ export function KanbanCard({ card, onEdit, onDelete }: Props) {
                   onDelete(card);
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="grid size-6 place-items-center rounded-md text-ink-faint hover:bg-red-500/10 hover:text-red-600"
+                className="grid size-11 place-items-center rounded-md text-ink-faint hover:bg-red-500/10 hover:text-red-600 sm:size-6"
               >
                 <Trash2 size={14} strokeWidth={2} />
               </button>

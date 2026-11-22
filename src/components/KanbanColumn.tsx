@@ -101,7 +101,7 @@ export function KanbanColumn({
           }
           disabled={cards.length > 0}
           onClick={() => onDeleteColumn(column.id)}
-          className="ml-auto grid size-6 shrink-0 place-items-center rounded-md text-slate-400 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400"
+          className="ml-auto grid size-11 shrink-0 place-items-center rounded-md text-slate-400 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 sm:size-6"
         >
           <X size={14} strokeWidth={2} />
         </button>
@@ -131,7 +131,7 @@ export function KanbanColumn({
       <button
         type="button"
         onClick={() => onAddCard(column.id)}
-        className="mt-[13px] flex items-center gap-1.5 rounded-[13px] px-2.5 py-2 text-left text-[13px] font-medium text-ink transition-colors hover:bg-surface hover:text-ink-strong hover:shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+        className="mt-[13px] flex min-h-11 items-center gap-1.5 rounded-[13px] px-2.5 py-2 text-left text-[13px] font-medium text-ink transition-colors hover:bg-surface hover:text-ink-strong hover:shadow-[0_1px_2px_rgba(0,0,0,0.05)] sm:min-h-0"
       >
         <Plus size={15} strokeWidth={2} />
         Add card

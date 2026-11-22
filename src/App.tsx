@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCorners,
   useSensor,
   useSensors,
@@ -12,7 +13,9 @@ import {
 } from '@dnd-kit/core';
 import { Plus, RotateCcw, Search, SearchX } from 'lucide-react';
 import { FaravaharMark, ThemeSwitcher } from './components/ThemeSwitcher';
-import { useBoardStore } from './store';
+import { useBoardStore, selectBoardStats, selectRecentTasks } from './store';
+import { StatsStrip } from './components/StatsStrip';
+import { AllTasksList } from './components/AllTasksList';
 import type { Card, Label, Priority } from './types';
 import { ALL_LABELS, ALL_PRIORITIES } from './types';
 import { KanbanColumn } from './components/KanbanColumn';
@@ -24,7 +27,7 @@ type ModalState =
   | null;
 
 const controlClass =
-  'h-[34px] rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring';
+  'h-11 rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink-strong outline-none transition-shadow placeholder:text-ink-faint focus:border-accent focus:ring-[3px] focus:ring-accent-ring sm:h-[34px]';
 
 export default function App() {
   const columns = useBoardStore((s) => s.columns);
@@ -38,6 +41,23 @@ export default function App() {
   const deleteColumn = useBoardStore((s) => s.deleteColumn);
   const resetBoard = useBoardStore((s) => s.resetBoard);
 
+  // Derived views, memoized from the stable columns/cards slices.
+  // (Subscribing to the object-returning selectors directly loops:
+  // zustand 5.1 useSyncExternalStore getSnapshot must return a cached
+  // reference, and the selectors build fresh objects every call.)
+  const stats = useMemo(
+    () => selectBoardStats({ columns, cards }),
+    [columns, cards],
+  );
+  const recentTasks = useMemo(
+    () => selectRecentTasks({ cards }),
+    [cards],
+  );
+
+  useEffect(() => {
+    document.title = `Taskflow Kanban v2 — ${stats.total} tasks · ${stats.done} done · ${stats.donePct}% complete`;
+  }, [stats.total, stats.done, stats.donePct]);
+
   const [search, setSearch] = useState('');
   const [labelFilter, setLabelFilter] = useState<Label | ''>('');
   const [priorityFilter, setPriorityFilter] = useState<Priority | ''>('');
@@ -47,8 +67,14 @@ export default function App() {
   const [newColumnTitle, setNewColumnTitle] = useState('');
   const [activeCard, setActiveCard] = useState<Card | null>(null);
 
+  // Mouse: drag after 5px. Touch: press-and-hold (250ms) so a swipe
+  // scrolls the board/column instead of hijacking into a drag — the
+  // 390px compact-gate lesson: a drag that fights scrolling is a failure.
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
+    }),
   );
 
   const visibleCards = useMemo(() => {
@@ -62,11 +88,12 @@ export default function App() {
     });
   }, [cards, search, labelFilter, priorityFilter]);
 
-  const totalCards = cards.length;
-  const doneCount = cards.filter((c) => {
-    const col = columns.find((col) => col.id === c.columnId);
-    return col?.title.toLowerCase() === 'done';
-  }).length;
+  const recentVisible = useMemo(
+    () => [...visibleCards].sort((a, b) => b.createdAt - a.createdAt),
+    [visibleCards],
+  );
+
+  const totalCards = stats.total;
   const filtersActive =
     search.trim() !== '' || labelFilter !== '' || priorityFilter !== '';
 
@@ -145,16 +172,16 @@ export default function App() {
   return (
     <div className="flex h-full flex-col bg-canvas text-ink-strong">
       <header className="tf-header border-b border-line bg-surface">
-        <div className="flex flex-wrap items-center gap-x-[21px] gap-y-3 px-[21px] py-[13px]">
-          <div className="flex shrink-0 items-start gap-2">
+        <div className="flex flex-wrap items-center gap-x-[21px] gap-y-3 px-4 py-[13px] sm:px-[21px]">
+          <div className="flex min-w-0 items-start gap-2">
             <FaravaharMark className="tf-faravahar mt-1 h-[28px] w-auto text-gold-600" />
             <div>
-            <h1 className="font-display text-[21px] font-bold leading-tight tracking-tight">
-              Taskflow <span className="text-accent">Kanban</span>
+            <h1 className="font-display text-lg font-bold leading-tight tracking-tight sm:text-[21px]">
+              Taskflow Kanban v2 — {stats.total} tasks · {stats.done} done ·{' '}
+              {stats.donePct}% complete
             </h1>
             <p className="mt-[3px] text-xs leading-[1.3] text-ink">
-              {totalCards} cards · {doneCount} done · saved automatically in
-              your browser
+              Drag cards between columns · saved automatically in your browser
             </p>
             </div>
           </div>
@@ -217,7 +244,7 @@ export default function App() {
               )
                 resetBoard();
             }}
-            className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-lg border border-line-strong px-3 text-sm font-medium text-ink transition-colors hover:bg-raised hover:text-ink-strong"
+            className="flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-line-strong px-3 text-sm font-medium text-ink transition-colors hover:bg-raised hover:text-ink-strong sm:h-[34px]"
           >
             <RotateCcw size={14} strokeWidth={2} />
             Reset demo data
@@ -226,7 +253,9 @@ export default function App() {
         <div aria-hidden="true" className="tf-double-rule" />
       </header>
 
-      <main className="board-scroll relative flex-1 overflow-x-auto overflow-y-hidden">
+      <main className="flex min-h-0 flex-1 flex-col">
+        <StatsStrip stats={stats} />
+        <div className="board-scroll relative min-h-0 flex-1 overflow-x-auto overflow-y-hidden">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
@@ -234,7 +263,7 @@ export default function App() {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex h-full items-start gap-[13px] px-[21px] py-[21px]">
+          <div className="flex h-full items-start gap-[13px] px-4 py-[21px] sm:px-[21px]">
             {columns.map((column) => (
               <KanbanColumn
                 key={column.id}
@@ -267,14 +296,14 @@ export default function App() {
                     <button
                       type="button"
                       onClick={commitNewColumn}
-                      className="h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-accent-text transition-colors hover:bg-accent-strong"
+                      className="h-11 rounded-lg bg-accent px-3 text-sm font-medium text-accent-text transition-colors hover:bg-accent-strong sm:h-[34px]"
                     >
                       Add column
                     </button>
                     <button
                       type="button"
                       onClick={() => setAddingColumn(false)}
-                      className="h-[34px] rounded-lg px-3 text-sm font-medium text-ink hover:bg-raised"
+                      className="h-11 rounded-lg px-3 text-sm font-medium text-ink hover:bg-raised sm:h-[34px]"
                     >
                       Cancel
                     </button>
@@ -324,16 +353,23 @@ export default function App() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="mt-[13px] h-[34px] rounded-lg bg-accent px-3 text-sm font-medium text-accent-text transition-colors hover:bg-accent-strong"
+                className="mt-[13px] h-11 rounded-lg bg-accent px-3 text-sm font-medium text-accent-text transition-colors hover:bg-accent-strong sm:h-[34px]"
               >
                 Clear filters
               </button>
             </div>
           </div>
         )}
+        </div>
+
+        <AllTasksList
+          cards={filtersActive ? recentVisible : recentTasks}
+          columns={columns}
+          onEditCard={(card) => setModal({ mode: 'edit', card })}
+        />
       </main>
 
-      <footer className="border-t border-line bg-surface px-[21px] py-2 text-center text-[11px] leading-[1.3] text-ink-faint">
+      <footer className="border-t border-line bg-surface px-4 py-2 text-center text-[11px] leading-[1.3] text-ink-faint sm:px-[21px]">
         Drag cards between columns to change their status · Click a column
         title to rename it · All changes are stored in localStorage
       </footer>
@@ -365,7 +401,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setConfirmDelete(null)}
-                className="h-[34px] rounded-lg px-[13px] text-sm font-medium text-ink hover:bg-raised"
+                className="h-11 rounded-lg px-[13px] text-sm font-medium text-ink hover:bg-raised sm:h-[34px]"
               >
                 Cancel
               </button>
@@ -375,7 +411,7 @@ export default function App() {
                   deleteCard(confirmDelete.id);
                   setConfirmDelete(null);
                 }}
-                className="h-[34px] rounded-lg bg-red-600 px-[13px] text-sm font-medium text-white transition-colors hover:bg-red-700"
+                className="h-11 rounded-lg bg-red-600 px-[13px] text-sm font-medium text-white transition-colors hover:bg-red-700 sm:h-[34px]"
               >
                 Delete
               </button>

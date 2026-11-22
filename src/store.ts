@@ -234,3 +234,51 @@ export const useBoardStore = create<BoardState>()(
     },
   ),
 );
+
+/* ---- Derived selectors (additive; no state-shape change) ---- */
+
+/** A card is done when its column is titled "Done"; overdue when its due
+    date has passed and it is not done. All counts come from live state. */
+export interface BoardStats {
+  total: number;
+  done: number;
+  donePct: number;
+  overdue: number;
+  columns: { id: string; title: string; count: number }[];
+}
+
+export function selectBoardStats(
+  s: Pick<BoardState, 'columns' | 'cards'>,
+): BoardStats {
+  const doneIds = new Set(
+    s.columns.filter((c) => c.title.toLowerCase() === 'done').map((c) => c.id),
+  );
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let done = 0;
+  let overdue = 0;
+  for (const card of s.cards) {
+    if (doneIds.has(card.columnId)) {
+      done++;
+    } else if (card.dueDate && new Date(`${card.dueDate}T00:00:00`) < today) {
+      overdue++;
+    }
+  }
+  const total = s.cards.length;
+  return {
+    total,
+    done,
+    donePct: total === 0 ? 0 : Math.round((done / total) * 100),
+    overdue,
+    columns: s.columns.map((c) => ({
+      id: c.id,
+      title: c.title,
+      count: s.cards.filter((card) => card.columnId === c.id).length,
+    })),
+  };
+}
+
+/** All cards, most recently created first — the dense list's derived view. */
+export function selectRecentTasks(s: Pick<BoardState, 'cards'>): Card[] {
+  return [...s.cards].sort((a, b) => b.createdAt - a.createdAt);
+}

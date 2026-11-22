@@ -30,7 +30,7 @@ const STYLE_OPTIONS: { id: ThemeStyle; label: string; Icon: typeof Landmark }[] 
 ];
 
 export function ThemeSwitcher() {
-  const { style, mode, setStyle, toggleMode } = useTheme();
+  const { style, mode, setStyle, setMode, toggleMode } = useTheme();
   const dark = mode === 'dark';
 
   return (
@@ -48,7 +48,7 @@ export function ThemeSwitcher() {
               type="button"
               onClick={() => setStyle(id)}
               aria-pressed={active}
-              className={`flex h-[28px] items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors ${
+              className={`flex h-11 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors sm:h-[28px] ${
                 active
                   ? 'bg-accent text-accent-text shadow-sm'
                   : 'text-ink hover:bg-raised hover:text-ink-strong'
@@ -61,24 +61,44 @@ export function ThemeSwitcher() {
         })}
       </div>
 
-      <div className="flex items-center gap-1.5">
-        <Sun
-          size={15}
-          strokeWidth={2}
-          aria-hidden="true"
-          className={dark ? 'text-ink-faint' : 'text-accent'}
-        />
+      {/* 44px-tall row on mobile; the switch itself is scaled up so its
+          hit area grows with it, and the Sun/Moon icons are themselves
+          44px buttons that set the mode directly. */}
+      <div className="flex min-h-11 items-center gap-1.5 sm:min-h-0">
+        <button
+          type="button"
+          onClick={() => setMode('light')}
+          aria-label="Use light mode"
+          aria-pressed={!dark}
+          className="grid size-11 shrink-0 place-items-center rounded-md sm:size-6"
+        >
+          <Sun
+            size={15}
+            strokeWidth={2}
+            aria-hidden="true"
+            className={dark ? 'text-ink-faint' : 'text-accent'}
+          />
+        </button>
         <Switch
           checked={dark}
           onCheckedChange={toggleMode}
           aria-label="Toggle dark mode"
+          className="max-sm:scale-150"
         />
-        <Moon
-          size={15}
-          strokeWidth={2}
-          aria-hidden="true"
-          className={dark ? 'text-accent' : 'text-ink-faint'}
-        />
+        <button
+          type="button"
+          onClick={() => setMode('dark')}
+          aria-label="Use dark mode"
+          aria-pressed={dark}
+          className="grid size-11 shrink-0 place-items-center rounded-md sm:size-6"
+        >
+          <Moon
+            size={15}
+            strokeWidth={2}
+            aria-hidden="true"
+            className={dark ? 'text-accent' : 'text-ink-faint'}
+          />
+        </button>
         <span className="sr-only">{dark ? 'Dark mode on' : 'Dark mode off'}</span>
       </div>
     </div>
