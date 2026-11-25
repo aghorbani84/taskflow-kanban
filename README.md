@@ -1,63 +1,78 @@
-# Taskflow — Kanban Board
+# Taskflow
 
-A polished Kanban board app for managing work visually: drag cards between
-columns, track priorities, labels and due dates, and pick up exactly where
-you left off — everything is saved in the browser.
+> A drag-and-drop Kanban board with priorities, labels, due dates, and filters, saved locally in your browser.
+
+[![Live demo](https://img.shields.io/badge/demo-GitHub%20Pages-2ea44f)](https://aghorbani84.github.io/taskflow-kanban/)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Zustand](https://img.shields.io/badge/state-Zustand-443E38)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+
+**Live demo:** https://aghorbani84.github.io/taskflow-kanban/
+
+## Overview
+
+Taskflow is a client-only Kanban board for managing work visually. Move cards between columns, track priority and due dates, and pick up where you left off: the board is persisted in `localStorage`. There is no backend, no API key, and no network call at runtime.
 
 ## Features
 
-- **Columns** — To Do, In Progress and Done out of the box; add your own,
-  rename them by clicking the title, delete empty ones.
-- **Drag & drop** — move cards between columns and reorder them inside a
-  column with a smooth drag interaction (@dnd-kit).
-- **Cards** — add, edit and delete cards with a title, description, labels,
-  priority (Low / Medium / High / Urgent) and a due date. Overdue and
-  due-soon cards are highlighted.
-- **Filtering** — free-text search plus label and priority filters.
-- **Counts** — live card count on every column header.
-- **Persistence** — board state is stored in `localStorage` and restored on
-  reload. First run seeds 12 realistic sample tasks; use **Reset demo data**
-  to restore them at any time.
+- **Columns** – To Do, In Progress, and Done by default; add your own, rename by clicking the title, delete empty ones
+- **Drag and drop** – move cards across columns and reorder within a column (@dnd-kit)
+- **Cards** – title, description, labels, priority (Low / Medium / High / Urgent), and due date; overdue and due-soon cards are highlighted
+- **Filtering** – free-text search plus label and priority filters
+- **All-tasks list** – a compact list view of every card, most recent first
+- **Stats strip** – live totals for tasks, completed (with percentage), overdue, and columns; per-column card counts
+- **Themes** – Modern and Achaemenid visual styles, each with light and dark mode
+- **Persistence** – Zustand `persist` middleware stores the board in `localStorage`; first run seeds sample tasks and **Reset demo data** restores them
 
-## Tech
+## Tech stack
 
-- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vite.dev/)
-- [Zustand](https://zustand.docs.pmnd.rs/) — board state, with the `persist`
-  middleware writing to `localStorage`
-- [Tailwind CSS v4](https://tailwindcss.com/) — styling via the Vite plugin
-- [@dnd-kit](https://dndkit.com/) (`@dnd-kit/core` + `@dnd-kit/sortable`) — drag & drop
+| Area | Tools |
+| --- | --- |
+| UI | React 19, TypeScript, Radix UI, lucide-react icons |
+| State | Zustand (with `persist` middleware) |
+| Drag and drop | `@dnd-kit/core`, `@dnd-kit/sortable` |
+| Styling | Tailwind CSS v4 (Vite plugin) |
+| Build & lint | Vite, oxlint |
+| Deployment | GitHub Pages via GitHub Actions |
 
-No backend, no API keys, no network calls at runtime.
+## Getting started
 
-## Run it
+Requires Node.js (CI uses Node 20).
 
 ```bash
+git clone https://github.com/aghorbani84/taskflow-kanban.git
+cd taskflow-kanban
 npm install
-npm run dev
+npm run dev        # start the dev server (usually http://localhost:5173)
 ```
 
-Then open the URL Vite prints (usually http://localhost:5173).
-
-## Build
+Other scripts:
 
 ```bash
-npm run build   # typechecks (tsc) and produces a production build in dist/
-npm run preview # serve the production build locally
+npm run build      # type-check (tsc) + production build into dist/
+npm run preview    # serve the production build locally
+npm run lint       # run oxlint
 ```
 
 ## Project structure
 
 ```
 src/
-  App.tsx                  # board layout, DnD context, filters
-  store.ts                 # Zustand store + localStorage persistence + seed data
-  types.ts                 # Card / Column / Label / Priority types
-  components/
-    KanbanColumn.tsx       # droppable column with count, rename, add-card
-    KanbanCard.tsx         # sortable card with labels, priority, due date
-    CardFormModal.tsx      # add / edit card form
+├── App.tsx               # board layout, DnD context, filters
+├── store.ts              # Zustand store, persistence, seed data
+├── types.ts              # Card / Column / Label / Priority types
+├── hooks/useTheme.ts     # style + light/dark mode
+└── components/
+    ├── KanbanColumn.tsx  # droppable column with count, rename, add card
+    ├── KanbanCard.tsx    # sortable card with labels, priority, due date
+    ├── CardFormModal.tsx # add / edit card form
+    ├── AllTasksList.tsx  # compact list of all cards
+    ├── StatsStrip.tsx    # live board totals
+    └── ThemeSwitcher.tsx
 ```
 
-## License
+## Author
 
-MIT
+Built by [aghorbani84](https://github.com/aghorbani84).
